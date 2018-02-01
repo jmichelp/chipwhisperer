@@ -35,10 +35,11 @@ class VisaScope(Parameterized):
 
     yScales = {"10 V":10, "5 V":5, "2 V":2, "500 mV":500E-3, "250 mV":250E-3, "100 mV":100E-3, "50 mV":50E-3}
 
-    header = ":SYSTem:HEADer OFF\n"
+    header = [":SYSTem:HEADer OFF\n"]
 
     def __init__(self):
         self.visaInst = None
+        self.rm = None
         self.dataUpdated = util.Signal()
 
         self.getParams().addChildren([
@@ -51,9 +52,14 @@ class VisaScope(Parameterized):
         ])
 
     def con(self, constr):
-        self.visaInst = instrument(constr)
+        if not self.rm:
+          try:
+            self.rm = ResourceManager()
+          except OSError:
+            self.rm = ResourceManager('@py')
+        self.visaInst = self.rm.get_instrument(constr)
         self.visaInst.write("*RST")
-        logging.info(self.visaInst.ask("*IDN?"))
+        logging.info(self.visaInst.query("*IDN?"))
         for cmd in self.header:
             self.visaInst.write(cmd)
             logging.info('VISA: %s' % cmd)
@@ -75,6 +81,14 @@ class VisaScope(Parameterized):
     def arm(self):
         """Example arm implementation works on most"""
         self.visaInst.write(":DIGitize")
+
+    def dis(self):
+        if self.visaInst:
+            self.visaInst.close()
+        self.visaInst = None
+        if self.rm:
+            self.rm.close()
+        self.rm = None
 
     def capture(self):
         """You MUST implement this"""

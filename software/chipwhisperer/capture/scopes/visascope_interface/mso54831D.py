@@ -55,7 +55,7 @@ class VisaScopeInterface_MSO54831D(VisaScope):
         self.visaInst.write(":TRIG:SWE AUTO")
         self.visaInst.write(":RUN")
         time.sleep(0.5)
-        test = self.visaInst.ask_for_values(":WAVeform:PREamble?")
+        test = self.visaInst.query_values(":WAVeform:PREamble?")
         self.visaInst.write(":TRIG:SWE TRIG")
 
         if test[4] != 0.0:
@@ -72,13 +72,13 @@ class VisaScopeInterface_MSO54831D(VisaScope):
         else:
             self.XDisplayedRange = spoints
 
-        self.XScale = self.visaInst.ask_for_values(":TIMebase:SCALe?")
+        self.XScale = self.visaInst.query_values(":TIMebase:SCALe?")
         self.XScale = self.XScale[0]
-        self.XOffset = self.visaInst.ask_for_values(":TIMebase:POSition?")
+        self.XOffset = self.visaInst.query_values(":TIMebase:POSition?")
         self.XOffset = self.XOffset[0]
-        self.YOffset = self.visaInst.ask_for_values(":CHANnel1:OFFSet?")
+        self.YOffset = self.visaInst.query_values(":CHANnel1:OFFSet?")
         self.YOffset = self.YOffset[0]
-        self.YScale = self.visaInst.ask_for_values(":CHANnel1:SCALe?")
+        self.YScale = self.visaInst.query_values(":CHANnel1:SCALe?")
         self.YScale = self.YScale[0]
 
     def arm(self):
