@@ -53,8 +53,8 @@ class Rhme2016Serial(TargetTemplate):
             'key': 'AF 23 D5 45 A0 EA E6 A0 74 65 96 CA CE 51 F0 F7',
             'trigger': True,
             'extra': [
-                ['OpenADC', 'Trigger Setup', 'Total Samples', 5000],
-                ['OpenADC', 'Trigger Setup', 'Offset', 0],
+                ['OpenADC', 'Trigger Setup', 'Total Samples', 4000],
+                ['OpenADC', 'Trigger Setup', 'Offset', 4000],
             ]
         }
         self._challenges['Still not SCAry'] = {
