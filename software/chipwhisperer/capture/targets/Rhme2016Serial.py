@@ -34,7 +34,7 @@ from simpleserial_readers.cwlite import SimpleSerial_ChipWhispererLite
 from chipwhisperer.common.utils.parameter import Parameter, setupSetParam
 
 
-class Rhme2016Serial(TargetTemplate):
+class Rhme2016Serial(TargetTemplate, util.DisableNewAttr):
     _name = "Rhme2016 Serial"
 
     def __init__(self):
@@ -62,7 +62,7 @@ class Rhme2016Serial(TargetTemplate):
             'trigger': False,
             'extra': [
                 ['OpenADC', 'Trigger Setup', 'Total Samples', 24400],
-                ['OpenADC', 'Trigger Setup', 'Offset', 0],
+                ['OpenADC', 'Trigger Setup', 'Offset', 4000],
             ]
         }
         self._challenges['eSCAlate'] = {
@@ -70,7 +70,7 @@ class Rhme2016Serial(TargetTemplate):
             'trigger': False,
             'extra': [
                 ['OpenADC', 'Trigger Setup', 'Total Samples', 24400],
-                ['OpenADC', 'Trigger Setup', 'Offset', 0],
+                ['OpenADC', 'Trigger Setup', 'Offset', 4000],
             ]
         }
         self._challenge = 'Piece of SCAke'
@@ -87,13 +87,14 @@ class Rhme2016Serial(TargetTemplate):
             {'name':'Output Format', 'key':'cmdout', 'type':'str', 'value':'$RESPONSE$'},
             {'name':'Challenge', 'key':'challenge', 'type':'list', 'values':self._challenges.keys(), 'get':self.getChallenge, 'set':self.setChallenge},
         ])
-
+        self.disable_newattr()
         self.setConnection(self.ser, blockSignal=True)
 
     @setupSetParam("Challenge")
     def setChallenge(self, challenge):
-        self._challenge = challenge
-        self.updateChallengeParams()
+        if self._challenge != challenge:
+            self._challenge = challenge
+            self.updateChallengeParams()
 
     def getChallenge(self):
         return self._challenge
@@ -173,13 +174,13 @@ class Rhme2016Serial(TargetTemplate):
     def init(self):
         self.ser.flush()
         self.outstanding_ack = False
-        self.updateChallengeParams()
+        # self.updateChallengeParams()
 
     def setModeEncrypt(self):
-      self.findParam('cmdgo').setValue('e$TEXT$')
+        self.findParam('cmdgo').setValue('e$TEXT$')
 
     def setModeDecrypt(self):
-      self.findParam('cmdgo').setValue('d$TEXT$')
+        self.findParam('cmdgo').setValue('d$TEXT$')
 
     def convertVarToString(self, var):
         if isinstance(var, str):
@@ -366,7 +367,7 @@ class Rhme2016Serial(TargetTemplate):
 
     @output_len.setter
     def output_len(self, length):
-        return self.setOutputLen(length)
+        self.setOutputLen(length)
 
     @property
     def key_cmd(self):
